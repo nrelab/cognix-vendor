@@ -1,13 +1,9 @@
 [
   {
     "repo": "command-corrections",
-    "url": "https://github.com/warpdotdev/command-corrections",
     "rev": "eae08c8c51d9bc9741fcb17eef2c21f696aebbeb",
     "packages": [
       "command-corrections"
-    ],
-    "patch_urls": [
-      "https://github.com/warpdotdev/command-corrections.git"
     ],
     "package_paths": {
       "command-corrections": "cognix-vendor/command-corrections/"
@@ -15,14 +11,10 @@
   },
   {
     "repo": "command-signatures",
-    "url": "https://github.com/warpdotdev/command-signatures",
     "rev": "00a032b8ea0ee5711e2077e39a92dc9ca2051cd3",
     "packages": [
       "warp-command-signatures",
       "warp-completion-metadata"
-    ],
-    "patch_urls": [
-      "https://github.com/warpdotdev/command-signatures.git"
     ],
     "package_paths": {
       "warp-command-signatures": "cognix-vendor/command-signatures/command-signatures",
@@ -31,13 +23,9 @@
   },
   {
     "repo": "cosmic-text",
-    "url": "https://github.com/warpdotdev/cosmic-text",
     "rev": "15198beba692162201c0ea8b15222cf5643ea068",
     "packages": [
       "cosmic-text"
-    ],
-    "patch_urls": [
-      "https://github.com/warpdotdev/cosmic-text.git"
     ],
     "package_paths": {
       "cosmic-text": "cognix-vendor/cosmic-text/"
@@ -45,13 +33,9 @@
   },
   {
     "repo": "difflib",
-    "url": "https://github.com/warpdotdev/difflib",
     "rev": "114177e7d8e1f8017baca397f943e11644b14d63",
     "packages": [
       "difflib"
-    ],
-    "patch_urls": [
-      "https://github.com/warpdotdev/difflib.git"
     ],
     "package_paths": {
       "difflib": "cognix-vendor/difflib/"
@@ -59,13 +43,9 @@
   },
   {
     "repo": "dwrote-rs",
-    "url": "https://github.com/warpdotdev/dwrote-rs",
     "rev": "a71ce6c0136f7d0954a9a8b181b5b2d8ace5eb9c",
     "packages": [
       "dwrote"
-    ],
-    "patch_urls": [
-      "https://github.com/warpdotdev/dwrote-rs"
     ],
     "package_paths": {
       "dwrote": "cognix-vendor/dwrote-rs/"
@@ -73,13 +53,9 @@
   },
   {
     "repo": "font-kit",
-    "url": "https://github.com/warpdotdev/font-kit",
     "rev": "a04b225ecb639bb850f21d05212cfdc7465000f3",
     "packages": [
       "font-kit"
-    ],
-    "patch_urls": [
-      "https://github.com/warpdotdev/font-kit"
     ],
     "package_paths": {
       "font-kit": "cognix-vendor/font-kit/"
@@ -87,14 +63,10 @@
   },
   {
     "repo": "jemallocator",
-    "url": "https://github.com/warpdotdev/jemallocator",
     "rev": "2ee30bfdf7059223b54810e4ea6c666f0a379e0b",
     "packages": [
       "tikv-jemalloc-sys",
       "tikv-jemallocator"
-    ],
-    "patch_urls": [
-      "https://github.com/warpdotdev/jemallocator.git"
     ],
     "package_paths": {
       "tikv-jemalloc-sys": "cognix-vendor/jemallocator/jemalloc-sys",
@@ -103,14 +75,10 @@
   },
   {
     "repo": "mermaid-to-svg",
-    "url": "https://github.com/warpdotdev/mermaid-to-svg",
     "rev": "f7233f69965c59760fad98d684c786569814d821",
     "packages": [
       "dagre_rust",
       "mermaid_to_svg"
-    ],
-    "patch_urls": [
-      "https://github.com/warpdotdev/mermaid-to-svg.git"
     ],
     "package_paths": {
       "dagre_rust": "cognix-vendor/mermaid-to-svg/crates/dagre_rust",
@@ -119,16 +87,12 @@
   },
   {
     "repo": "notify",
-    "url": "https://github.com/warpdotdev/notify",
     "rev": "f3afcda3058941e17e09689afea40e2a2db057e0",
     "packages": [
       "file-id",
       "notify",
       "notify-debouncer-full",
       "notify-types"
-    ],
-    "patch_urls": [
-      "https://github.com/warpdotdev/notify"
     ],
     "package_paths": {
       "file-id": "cognix-vendor/notify/file-id",
@@ -139,13 +103,9 @@
   },
   {
     "repo": "pathfinder",
-    "url": "https://github.com/warpdotdev/pathfinder",
     "rev": "34128a129ca6aee168fbc5060a4f21b4f7e486a9",
     "packages": [
       "pathfinder_simd"
-    ],
-    "patch_urls": [
-      "https://github.com/warpdotdev/pathfinder.git"
     ],
     "package_paths": {
       "pathfinder_simd": "cognix-vendor/pathfinder/simd"
@@ -153,14 +113,10 @@
   },
   {
     "repo": "rmcp",
-    "url": "https://github.com/warpdotdev/rmcp",
     "rev": "c0f65dc441af7d714b9c453ac5e7ef641451abe3",
     "packages": [
       "rmcp",
       "rmcp-macros"
-    ],
-    "patch_urls": [
-      "https://github.com/warpdotdev/rmcp.git"
     ],
     "package_paths": {
       "rmcp": "cognix-vendor/rmcp/crates/rmcp",
@@ -169,13 +125,9 @@
   },
   {
     "repo": "rust-email_address",
-    "url": "https://github.com/warpdotdev/rust-email_address",
     "rev": "b3e5205b4efdc83832f230d8eb6894fd00a9ec32",
     "packages": [
       "email_address"
-    ],
-    "patch_urls": [
-      "https://github.com/warpdotdev/rust-email_address"
     ],
     "package_paths": {
       "email_address": "cognix-vendor/rust-email_address/"
@@ -183,13 +135,9 @@
   },
   {
     "repo": "rust-objc",
-    "url": "https://github.com/warpdotdev/rust-objc",
     "rev": "5b656827fa9f863ef0eb22e444a3fedac009e78a",
     "packages": [
       "objc"
-    ],
-    "patch_urls": [
-      "https://github.com/warpdotdev/rust-objc.git"
     ],
     "package_paths": {
       "objc": "cognix-vendor/rust-objc/"
@@ -197,13 +145,9 @@
   },
   {
     "repo": "session-sharing-protocol",
-    "url": "https://github.com/warpdotdev/session-sharing-protocol",
     "rev": "3a12b871dfd1019a66057e4d9b7d5c812b73ee8c",
     "packages": [
       "session-sharing-protocol"
-    ],
-    "patch_urls": [
-      "https://github.com/warpdotdev/session-sharing-protocol.git"
     ],
     "package_paths": {
       "session-sharing-protocol": "cognix-vendor/session-sharing-protocol/"
@@ -211,15 +155,11 @@
   },
   {
     "repo": "tink-rust",
-    "url": "https://github.com/warpdotdev/tink-rust",
     "rev": "0141035f04a5e262b955c450857b689cff877469",
     "packages": [
       "tink-core",
       "tink-hybrid",
       "tink-proto"
-    ],
-    "patch_urls": [
-      "https://github.com/warpdotdev/tink-rust"
     ],
     "package_paths": {
       "tink-core": "cognix-vendor/tink-rust/core",
@@ -229,13 +169,9 @@
   },
   {
     "repo": "uneval",
-    "url": "https://github.com/warpdotdev/uneval",
     "rev": "df4d9fad372aedc447e6f93ca0f930fabaf9dd1a",
     "packages": [
       "uneval"
-    ],
-    "patch_urls": [
-      "https://github.com/warpdotdev/uneval"
     ],
     "package_paths": {
       "uneval": "cognix-vendor/uneval/"
@@ -243,15 +179,11 @@
   },
   {
     "repo": "vte",
-    "url": "https://github.com/warpdotdev/vte",
     "rev": "4b399c87b63ba88f45709edaa6383fc519f6c900",
     "packages": [
       "utf8parse",
       "vte",
       "vte_generate_state_changes"
-    ],
-    "patch_urls": [
-      "https://github.com/warpdotdev/vte.git"
     ],
     "package_paths": {
       "utf8parse": "cognix-vendor/vte/utf8parse",
@@ -261,13 +193,9 @@
   },
   {
     "repo": "warp-proto-apis",
-    "url": "https://github.com/warpdotdev/warp-proto-apis",
     "rev": "78a78f21a75432bf0141e396fb318bf1694e47f0",
     "packages": [
       "warp_multi_agent_api"
-    ],
-    "patch_urls": [
-      "https://github.com/warpdotdev/warp-proto-apis.git"
     ],
     "package_paths": {
       "warp_multi_agent_api": "cognix-vendor/warp-proto-apis/apis/multi_agent/v1/gen/rust"
@@ -275,14 +203,10 @@
   },
   {
     "repo": "winit",
-    "url": "https://github.com/warpdotdev/winit",
     "rev": "7ef01853ae3fe952e6014080a88dc4352662dfb1",
     "packages": [
       "dpi",
       "winit"
-    ],
-    "patch_urls": [
-      "https://github.com/warpdotdev/winit.git"
     ],
     "package_paths": {
       "dpi": "cognix-vendor/winit/dpi",
@@ -291,14 +215,10 @@
   },
   {
     "repo": "workflows",
-    "url": "https://github.com/warpdotdev/workflows",
     "rev": "793a98ddda6ef19682aed66364faebd2829f0e01",
     "packages": [
       "warp-workflows",
       "warp-workflows-types"
-    ],
-    "patch_urls": [
-      "https://github.com/warpdotdev/workflows"
     ],
     "package_paths": {
       "warp-workflows": "cognix-vendor/workflows/workflows",
@@ -307,13 +227,9 @@
   },
   {
     "repo": "yaml-rust",
-    "url": "https://github.com/warpdotdev/yaml-rust",
     "rev": "51684719d0102ca85ff4b21cec39877a0c669e19",
     "packages": [
       "yaml-rust"
-    ],
-    "patch_urls": [
-      "https://github.com/warpdotdev/yaml-rust.git"
     ],
     "package_paths": {
       "yaml-rust": "cognix-vendor/yaml-rust/"

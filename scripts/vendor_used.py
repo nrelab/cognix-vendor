@@ -19,12 +19,6 @@ VENDOR_GIT_URL = os.environ.get(
 LOCK_RE = re.compile(
     r"git\+https://github\.com/warpdotdev/([^?]+?)(?:\.git)?\?[^#]+#([0-9a-f]{40})$"
 )
-URL_RE = re.compile(r"https://github\.com/warpdotdev/[A-Za-z0-9_.-]+")
-
-
-def repo_of(url):
-    name = url.rsplit("/", 1)[-1]
-    return name[:-4] if name.endswith(".git") else name
 
 
 def package_paths(root):
@@ -53,21 +47,8 @@ def main():
         if not match:
             continue
         name, sha = match.groups()
-        entry = repos.setdefault(
-            name, {"sha": sha, "packages": set(), "urls": set()}
-        )
+        entry = repos.setdefault(name, {"sha": sha, "packages": set()})
         entry["packages"].add(pkg["name"])
-        entry["urls"].update(
-            (
-                f"https://github.com/warpdotdev/{name}",
-                f"https://github.com/warpdotdev/{name}.git",
-            )
-        )
-
-    used_urls = set()
-    for manifest in glob.glob(os.path.join(SOURCE, "**", "Cargo.toml"), recursive=True):
-        with open(manifest, encoding="utf-8") as handle:
-            used_urls.update(URL_RE.findall(handle.read()))
 
     os.makedirs(VENDOR, exist_ok=True)
     manifest = []
@@ -88,9 +69,6 @@ def main():
             ignore=shutil.ignore_patterns(".git", ".cargo-ok"),
         )
 
-        urls = sorted(u for u in entry["urls"] if repo_of(u) == name and u in used_urls)
-        if not urls:
-            urls = [f"https://github.com/warpdotdev/{name}"]
         found = package_paths(dst)
         package_paths_out = {}
         for package in sorted(entry["packages"]):
@@ -102,10 +80,8 @@ def main():
         manifest.append(
             {
                 "repo": name,
-                "url": f"https://github.com/warpdotdev/{name}",
                 "rev": sha,
                 "packages": sorted(entry["packages"]),
-                "patch_urls": urls,
                 "package_paths": package_paths_out,
             }
         )
@@ -119,7 +95,7 @@ def main():
         return '"' + value.replace("\\", "\\\\").replace('"', '\\"') + '"'
 
     toml_lines = [
-        "# Vendored warpdotdev sources used as git dependencies by cognix-dev.",
+        "# Vendored sources used as git dependencies by cognix-dev.",
         "# Mirrors MANIFEST.json; regenerate via scripts/vendor_used.py.",
         "# Consumers reference crates as `<package> = { git = \"<git_url>\" }`.",
         "",
@@ -129,13 +105,9 @@ def main():
     for item in manifest:
         toml_lines.append("[[vendor]]")
         toml_lines.append(f'repo = {toml_quote(item["repo"])}')
-        toml_lines.append(f'url = {toml_quote(item["url"])}')
         toml_lines.append(f'rev = {toml_quote(item["rev"])}')
         toml_lines.append("packages = [")
         toml_lines += [f"  {toml_quote(p)}," for p in item["packages"]]
-        toml_lines.append("]")
-        toml_lines.append("patch_urls = [")
-        toml_lines += [f"  {toml_quote(u)}," for u in item["patch_urls"]]
         toml_lines.append("]")
         toml_lines.append("[vendor.package_paths]")
         for package, path in item["package_paths"].items():
@@ -145,14 +117,14 @@ def main():
         handle.write("\n".join(toml_lines))
 
     with open(os.path.join(VENDOR, "SOURCES.md"), "w", encoding="utf-8") as handle:
-        handle.write("# Vendored warpdotdev sources\n\n")
+        handle.write("# Vendored sources\n\n")
         handle.write("Only repositories used as git dependencies by `cognix-dev`.\n\n")
-        handle.write("| Repo | Revision | Packages | Patch URL |\n")
-        handle.write("| --- | --- | --- | --- |\n")
+        handle.write("| Repo | Revision | Packages |\n")
+        handle.write("| --- | --- | --- |\n")
         for item in manifest:
             handle.write(
-                f"| [{item['repo']}]({item['url']}) | `{item['rev'][:12]}` | "
-                f"{', '.join(item['packages'])} | `{item['patch_urls'][0]}` |\n"
+                f"| {item['repo']} | `{item['rev'][:12]}` | "
+                f"{', '.join(item['packages'])} |\n"
             )
 
     cargo_toml = os.path.join(ROOT, "Cargo.toml")
@@ -193,25 +165,10 @@ def main():
         base = handle.read()
     marker = "# >>> vendored warpdotdev patches >>>"
     base = base.split(marker)[0].rstrip() + "\n"
-    lines = [base, "", marker]
-    for item in manifest:
-        entries = {
-            package
-            for package in item["package_paths"]
-            if package not in crates_io_patched
-        }
-        if not entries:
-            continue
-        for url in item["patch_urls"]:
-            lines.append(f'[patch."{url}"]')
-            for package in sorted(entries):
-                lines.append(f'{package} = {{ git = "{VENDOR_GIT_URL}" }}')
-            lines.append("")
-    lines.append("# <<< vendored warpdotdev patches <<<")
     with open(config, "w", encoding="utf-8") as handle:
-        handle.write("\n".join(lines) + "\n")
+        handle.write(base)
 
-    print(f"\nvendored {len(manifest)} repos, updated {config}")
+    print(f"\nvendored {len(manifest)} repos")
 
 
 if __name__ == "__main__":
