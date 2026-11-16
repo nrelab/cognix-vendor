@@ -20,6 +20,52 @@ LOCK_RE = re.compile(
     r"git\+https://github\.com/warpdotdev/([^?]+?)(?:\.git)?\?[^#]+#([0-9a-f]{40})$"
 )
 
+GIT_URL_RE = re.compile(
+    r'(git\s*=\s*)(["\'])https://github\.com/warpdotdev/[^"\']*\2'
+)
+VENDOR_PATH_RE = re.compile(
+    r'path\s*=\s*(["\'])(?:\.\./)*cognix-vendor/[^"\']*\1'
+)
+PIN_INLINE_RES = [
+    re.compile(r',\s*(?:rev|tag|branch)\s*=\s*"[^"]*"'),
+    re.compile(r'(?:rev|tag|branch)\s*=\s*"[^"]*"\s*,\s*'),
+    re.compile(r'(?:rev|tag|branch)\s*=\s*"[^"]*"'),
+]
+PIN_LINE_RE = re.compile(r"^\s*(?:rev|tag|branch)\s*=")
+
+
+def _vendor_git_sub(match):
+    return f'{match.group(1)}{match.group(2)}{VENDOR_GIT_URL}{match.group(2)}'
+
+
+def rewrite_deps(text):
+    """Point vendored deps at the vendor repo and drop upstream pins."""
+    lines = text.splitlines()
+    marked = [False] * len(lines)
+    for i, line in enumerate(lines):
+        if GIT_URL_RE.search(line):
+            line = GIT_URL_RE.sub(_vendor_git_sub, line)
+        elif VENDOR_PATH_RE.search(line):
+            line = VENDOR_PATH_RE.sub(f'git = "{VENDOR_GIT_URL}"', line)
+        else:
+            continue
+        for pin_re in PIN_INLINE_RES:
+            line = pin_re.sub("", line)
+        lines[i] = line
+        marked[i] = True
+    # Drop bare rev/tag/branch lines inside dep tables that had a rewrite.
+    out = []
+    section_marked = False
+    for i, line in enumerate(lines):
+        if line.lstrip().startswith("["):
+            section_marked = False
+        if marked[i]:
+            section_marked = True
+        if section_marked and PIN_LINE_RE.match(line):
+            continue
+        out.append(line)
+    return "\n".join(out) + "\n"
+
 
 def package_paths(root):
     paths = {}
@@ -127,28 +173,27 @@ def main():
                 f"{', '.join(item['packages'])} |\n"
             )
 
+    manifests = glob.glob(os.path.join(SOURCE, "**", "Cargo.toml"), recursive=True)
+    manifests.append(os.path.join(ROOT, "Cargo.toml"))
+    vendor_root = os.path.abspath(VENDOR) + os.sep
+    for path in manifests:
+        apath = os.path.abspath(path)
+        if "target" in apath.split(os.sep) or apath.startswith(vendor_root):
+            continue
+        try:
+            with open(path, encoding="utf-8") as handle:
+                text = handle.read()
+        except OSError:
+            continue
+        updated = rewrite_deps(text)
+        if updated != text:
+            with open(path, "w", encoding="utf-8") as handle:
+                handle.write(updated)
+            print(f"  rewrote deps in {os.path.relpath(path, ROOT)}")
+
     cargo_toml = os.path.join(ROOT, "Cargo.toml")
     with open(cargo_toml, encoding="utf-8") as handle:
-        original_text = handle.read()
-    with open(os.path.join(SOURCE, "Cargo.toml"), encoding="utf-8") as handle:
-        data = tomllib.loads(handle.read())
-    crates_io_patched = {
-        package
-        for package, spec in data.get("patch", {}).get("crates-io", {}).items()
-        if isinstance(spec, dict) and "warpdotdev" in spec.get("git", "")
-    }
-    rewritten = []
-    in_crates_patch = False
-    for line in original_text.splitlines():
-        if line.startswith("["):
-            in_crates_patch = line.strip() == "[patch.crates-io]"
-        if in_crates_patch:
-            for package in crates_io_patched:
-                if line.startswith(f"{package} = "):
-                    line = f'{package} = {{ git = "{VENDOR_GIT_URL}" }}'
-                    break
-        rewritten.append(line)
-    workspace_manifest = "\n".join(rewritten) + "\n"
+        workspace_manifest = handle.read()
     if 'exclude = ["vendor"]' in workspace_manifest:
         workspace_manifest = workspace_manifest.replace(
             'exclude = ["vendor"]', 'exclude = ["cognix-vendor"]', 1
