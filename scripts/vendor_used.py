@@ -12,6 +12,9 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 SOURCE = os.environ.get("SOURCE_DIR", "/workspaces/cognix-dev")
 VENDOR = os.path.join(ROOT, "cognix-vendor")
 CARGO_CACHE = os.path.expanduser("~/.cargo/git/checkouts")
+VENDOR_GIT_URL = os.environ.get(
+    "VENDOR_GIT_URL", "https://github.com/nrelab/cognix-vendor.git"
+)
 
 LOCK_RE = re.compile(
     r"git\+https://github\.com/warpdotdev/([^?]+?)(?:\.git)?\?[^#]+#([0-9a-f]{40})$"
@@ -112,6 +115,35 @@ def main():
         json.dump(manifest, handle, indent=2)
         handle.write("\n")
 
+    def toml_quote(value):
+        return '"' + value.replace("\\", "\\\\").replace('"', '\\"') + '"'
+
+    toml_lines = [
+        "# Vendored warpdotdev sources used as git dependencies by cognix-dev.",
+        "# Mirrors MANIFEST.json; regenerate via scripts/vendor_used.py.",
+        "# Consumers reference crates as `<package> = { git = \"<git_url>\" }`.",
+        "",
+        f'git_url = "{VENDOR_GIT_URL}"',
+        "",
+    ]
+    for item in manifest:
+        toml_lines.append("[[vendor]]")
+        toml_lines.append(f'repo = {toml_quote(item["repo"])}')
+        toml_lines.append(f'url = {toml_quote(item["url"])}')
+        toml_lines.append(f'rev = {toml_quote(item["rev"])}')
+        toml_lines.append("packages = [")
+        toml_lines += [f"  {toml_quote(p)}," for p in item["packages"]]
+        toml_lines.append("]")
+        toml_lines.append("patch_urls = [")
+        toml_lines += [f"  {toml_quote(u)}," for u in item["patch_urls"]]
+        toml_lines.append("]")
+        toml_lines.append("[vendor.package_paths]")
+        for package, path in item["package_paths"].items():
+            toml_lines.append(f"{toml_quote(package)} = {toml_quote(path)}")
+        toml_lines.append("")
+    with open(os.path.join(VENDOR, "vendor.toml"), "w", encoding="utf-8") as handle:
+        handle.write("\n".join(toml_lines))
+
     with open(os.path.join(VENDOR, "SOURCES.md"), "w", encoding="utf-8") as handle:
         handle.write("# Vendored warpdotdev sources\n\n")
         handle.write("Only repositories used as git dependencies by `cognix-dev`.\n\n")
@@ -128,11 +160,6 @@ def main():
         original_text = handle.read()
     with open(os.path.join(SOURCE, "Cargo.toml"), encoding="utf-8") as handle:
         data = tomllib.loads(handle.read())
-    local_paths = {
-        package: path
-        for item in manifest
-        for package, path in item["package_paths"].items()
-    }
     crates_io_patched = {
         package
         for package, spec in data.get("patch", {}).get("crates-io", {}).items()
@@ -146,7 +173,7 @@ def main():
         if in_crates_patch:
             for package in crates_io_patched:
                 if line.startswith(f"{package} = "):
-                    line = f'{package} = {{ path = "{local_paths[package]}" }}'
+                    line = f'{package} = {{ git = "{VENDOR_GIT_URL}" }}'
                     break
         rewritten.append(line)
     workspace_manifest = "\n".join(rewritten) + "\n"
@@ -169,16 +196,16 @@ def main():
     lines = [base, "", marker]
     for item in manifest:
         entries = {
-            package: path
-            for package, path in item["package_paths"].items()
+            package
+            for package in item["package_paths"]
             if package not in crates_io_patched
         }
         if not entries:
             continue
         for url in item["patch_urls"]:
             lines.append(f'[patch."{url}"]')
-            for package, path in entries.items():
-                lines.append(f'{package} = {{ path = "{path}" }}')
+            for package in sorted(entries):
+                lines.append(f'{package} = {{ git = "{VENDOR_GIT_URL}" }}')
             lines.append("")
     lines.append("# <<< vendored warpdotdev patches <<<")
     with open(config, "w", encoding="utf-8") as handle:
