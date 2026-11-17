@@ -1,0 +1,6 @@
+# Illustrative allowlist only. Confirm compatibility with Cognix's licensing model
+# and each upstream package's actual license before distribution.
+allowed = ["MIT", "Apache-2.0", "BSD-2-Clause", "BSD-3-Clause", "ISC"]
+deny_unknown = true
+
+# Consider separately reviewing AGPL, GPL, LGPL, MPL, custom, and dual licenses.

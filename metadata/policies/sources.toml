@@ -1,0 +1,9 @@
+# Add approved source rules as the repository policy matures.
+# Prefer immutable Git revisions in consumer Cargo.lock files.
+
+[git]
+require_locked_revision = true
+allow_unpinned = false
+
+[registry]
+allow_crates_io = true
