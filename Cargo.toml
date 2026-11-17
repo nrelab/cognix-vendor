@@ -1,42 +1,24 @@
 # Central vendor repository for cognix.
 # Consumed via git dependencies, e.g.:
 #   objc = { git = "https://github.com/nrelab/cognix-vendor.git" }
+#
+# Only crates without their own upstream workspace are listed as
+# members; crates inside nested workspaces (winit, notify, vte, ...)
+# are still resolvable as git dependencies but excluded here so that
+# cargo commands inside this repo do not hit workspace conflicts.
 
 [workspace]
 resolver = "2"
 members = [
   "command-corrections",
-  "command-signatures/command-signatures",
-  "command-signatures/completion-metadata",
-  "cosmic-text",
   "difflib",
   "dwrote-rs",
   "font-kit",
-  "jemallocator/jemalloc-sys",
-  "jemallocator/jemallocator",
   "mermaid-to-svg",
   "mermaid-to-svg/crates/dagre_rust",
-  "notify/file-id",
-  "notify/notify",
-  "notify/notify-debouncer-full",
-  "notify/notify-types",
-  "pathfinder/simd",
-  "rmcp/crates/rmcp",
-  "rmcp/crates/rmcp-macros",
   "rust-email_address",
   "rust-objc",
   "session-sharing-protocol",
-  "tink-rust/core",
-  "tink-rust/hybrid",
-  "tink-rust/proto",
   "uneval",
-  "vte",
-  "vte/utf8parse",
-  "vte/vte_generate_state_changes",
-  "warp-proto-apis/apis/multi_agent/v1/gen/rust",
-  "winit",
-  "winit/dpi",
-  "workflows/workflow-types",
-  "workflows/workflows",
   "yaml-rust",
 ]
